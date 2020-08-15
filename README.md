@@ -1,1 +1,1 @@
-# tidb_lesson
+# pingcap_lesson
