@@ -5,14 +5,14 @@
 
 ## 启动服务器:
 
-**启动pd:**
+**1.启动pd:**
 nohup /home/www/github/pd/bin/pd-server --data-dir=/home/www/github/pd --log-file=/data/log/pd/pd.log -L info  &
 
 
-**启动tidb-server:**
+**2。启动tidb-server:**
 nohup /home/www/github/tidb/bin/tidb-server --store=tikv --path='127.0.0.1:2379' --log-file=/data/log/tidb/tidb.log -L info > /data/log/tidb/tidb_stdout.log &
 
-**启动3个tikv-server:**
+**3.启动3个tikv-server:**
 nohup /home/www/github/tikv/target/release/tikv-server --pd='127.0.0.1:2379' --data-dir=/home/www/github/tikv --log-file=/data/log/tikv/tikv.log.1 -L info -A 127.0.0.1:9000  &
 nohup /home/www/github/tikv-server2/target/release/tikv-server --pd='127.0.0.1:2379' --data-dir=/home/www/github/tikv-server2 --log-file=/data/log/tikv/tikv.log.2 -L info -A 127.0.0.1:9001 &
 nohup /home/www/github/tikv-server3/target/release/tikv-server --pd='127.0.0.1:2379' --data-dir=/home/www/github/tikv-server3 --log-file=/data/log/tikv/tikv.log.3 -L info -A 127.0.0.1:9002 &
