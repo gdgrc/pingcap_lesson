@@ -3,6 +3,20 @@
 
 事务启动方式有两种，一种是显示启动事务,主动声明语句start transaction  , 第二种是 隐式事务, 在单句写操作执行时 update, insert , 实际上也启动了事务, 只是事务只有一条执行语句.
 
+## 启动服务器:
+
+**启动pd:**
+nohup /home/www/github/pd/bin/pd-server --data-dir=/home/www/github/pd --log-file=/data/log/pd/pd.log -L info  &
+
+
+**启动tidb-server:**
+nohup /home/www/github/tidb/bin/tidb-server --store=tikv --path='127.0.0.1:2379' --log-file=/data/log/tidb/tidb.log -L info > /data/log/tidb/tidb_stdout.log &
+
+**启动3个tikv-server:**
+nohup /home/www/github/tikv/target/release/tikv-server --pd='127.0.0.1:2379' --data-dir=/home/www/github/tikv --log-file=/data/log/tikv/tikv.log.1 -L info -A 127.0.0.1:9000  &
+nohup /home/www/github/tikv-server2/target/release/tikv-server --pd='127.0.0.1:2379' --data-dir=/home/www/github/tikv-server2 --log-file=/data/log/tikv/tikv.log.2 -L info -A 127.0.0.1:9001 &
+nohup /home/www/github/tikv-server3/target/release/tikv-server --pd='127.0.0.1:2379' --data-dir=/home/www/github/tikv-server3 --log-file=/data/log/tikv/tikv.log.3 -L info -A 127.0.0.1:9002 &
+
 ## 定位语句执行代码链路: 
 
 **1.通过架构文章缩小其对应的所在的package或者类:** 在文章https://pingcap.com/blog-cn/tidb-source-code-reading-2/ 源码架构汇总文章中，搜索transaction 关键词，点击后弹出https://github.com/pingcap/tidb/blob/source-code/kv/kv.go#L121 ，里面有一个transaction 类，可以猜测这是统一掌管事务的接口，但是这个类是一个interface, 我们需要找到其实现类.
