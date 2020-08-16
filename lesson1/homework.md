@@ -1,7 +1,7 @@
 ## 理解题意: 
 根据题目意思，需要在事务开启时，打印hello transaction.根据架构图，不难得需要确认的代码在tidb (无状态sql层).
 
-事务启动方式有两种，一种是显示启动事务,主动声明语句start transaction  , 第二种是 隐式事务, 在单句写操作执行时 update, insert , 实际上也启动了事务, 只是事务只有一条执行语句.
+事务启动方式有两种，一种是显式启动事务,主动声明语句start transaction  , 第二种是 隐式事务, 在单句写操作执行时 update, insert , 实际上也启动了事务, 只是事务只有一条执行语句.
 
 ## 启动服务器:
 
@@ -24,7 +24,7 @@ nohup /home/www/github/tikv-server3/target/release/tikv-server --pd='127.0.0.1:2
 
 **2.打印其运行时堆栈:** 根据第一步，不难发现 newTikvTxnWithStartTS 函数是事务的创建, 在里面加上 fmt.Println(string(debug.Stack())) 在标准输出打印其调用堆栈。 
 
-**3.触发用户显示声明事务链路:** 使用mysql client连接，通过对比触发前，触发后的新增堆栈 定位到其新增堆栈.(cat  tidb_stdout.log | grep ".go:" | grep "[^ ]*" -o | grep ":" | sort | uniq > no_trx; diff no_trx with_trx) 
+**3.触发用户显式声明事务链路:** 使用mysql client连接，通过对比触发前，触发后的新增堆栈 定位到其新增堆栈.(cat  tidb_stdout.log | grep ".go:" | grep "[^ ]*" -o | grep ":" | sort | uniq > no_trx; diff no_trx with_trx) 
 堆栈如下:
 ```
 new trx:  goroutine 1561 [running]:
