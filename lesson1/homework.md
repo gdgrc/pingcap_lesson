@@ -14,7 +14,9 @@ nohup /home/www/github/tidb/bin/tidb-server --store=tikv --path='127.0.0.1:2379'
 
 **3.启动3个tikv-server:**
 nohup /home/www/github/tikv/target/release/tikv-server --pd='127.0.0.1:2379' --data-dir=/home/www/github/tikv --log-file=/data/log/tikv/tikv.log.1 -L info -A 127.0.0.1:9000  &
+
 nohup /home/www/github/tikv-server2/target/release/tikv-server --pd='127.0.0.1:2379' --data-dir=/home/www/github/tikv-server2 --log-file=/data/log/tikv/tikv.log.2 -L info -A 127.0.0.1:9001 &
+
 nohup /home/www/github/tikv-server3/target/release/tikv-server --pd='127.0.0.1:2379' --data-dir=/home/www/github/tikv-server3 --log-file=/data/log/tikv/tikv.log.3 -L info -A 127.0.0.1:9002 &
 
 ## 定位语句执行代码链路: 
