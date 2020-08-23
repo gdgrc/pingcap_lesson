@@ -219,6 +219,7 @@ But  it comes up with ' unknown or incorrect time zone: SystemV/PST8PDT'
         3. 测试结果:
             ```
             READ   - Takes(s): 801.8, Count: 2498354, OPS: 3116.1, Avg(us): 8938, Min(us): 389, Max(us): 499807, 99th(us): 35000, 99.9th(us): 53000, 99.99th(us): 184000
+            
             UPDATE - Takes(s): 801.7, Count: 2501582, OPS: 3120.2, Avg(us): 31846, Min(us): 1775, Max(us): 1614822, 99th(us): 195000, 99.9th(us): 286000, 99.99th(us): 421000
             ```
             ![go-ycsb_tidb-query-summary](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-ycsb/go-yscb_tidb-query-summary.png)      
@@ -230,6 +231,23 @@ But  it comes up with ' unknown or incorrect time zone: SystemV/PST8PDT'
         3. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  check -T 16
         4. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  cleanup -T 16
         5. **测试结果:**
+        ```
+        DELIVERY - Takes(s): 2569.9, Count: 32500, TPM: 758.8, Sum(ms): 5893715, Avg(ms): 181, 95th(ms): 256, 99th(ms): 512, 99.9th(ms): 512
+        
+        DELIVERY_ERR - Takes(s): 0.0, Count: 1, TPM: 6355.1, Sum(ms): 19, Avg(ms): 19, 95th(ms): 20, 99th(ms): 20, 99.9th(ms): 20
+        
+        NEW_ORDER - Takes(s): 2570.2, Count: 363147, TPM: 8477.6, Sum(ms): 20018025, Avg(ms): 55, 95th(ms): 96, 99th(ms): 128, 99.9th(ms): 192
+        
+        NEW_ORDER_ERR - Takes(s): 0.0, Count: 7, TPM: 43877.5, Sum(ms): 254, Avg(ms): 36, 95th(ms): 64, 99th(ms): 64, 99.9th(ms): 64
+        
+        ORDER_STATUS - Takes(s): 2570.2, Count: 32262, TPM: 753.1, Sum(ms): 510239, Avg(ms): 15, 95th(ms): 32, 99th(ms): 48, 99.9th(ms): 96
+        
+        PAYMENT - Takes(s): 2570.2, Count: 346496, TPM: 8088.8, Sum(ms): 13569020, Avg(ms): 39, 95th(ms): 80, 99th(ms): 96, 99.9th(ms): 160
+        
+        PAYMENT_ERR - Takes(s): 0.0, Count: 3, TPM: 18770.5, Sum(ms): 37, Avg(ms): 12, 95th(ms): 24, 99th(ms): 24, 99.9th(ms): 24
+        
+STOCK_LEVEL - Takes(s): 2570.2, Count: 32086, TPM: 749.0, Sum(ms): 726191, Avg(ms): 22, 95th(ms): 40, 99th(ms): 64, 99.9th(ms): 80
+        ```
         ![go-tpc_tidb-query-summary](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-tpc/go-tpc_tidb-query-summary.png)
         ![go-tpc_tikv-details-cpu](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-tpc/go-tpc_tikv-details-cpu.png)
         ![go-tpc_tikv-details-gRPC](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-tpc/go-tpc_tikv-details-gRPC.png)
