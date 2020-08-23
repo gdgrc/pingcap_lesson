@@ -164,7 +164,7 @@ But  it comes up with ' unknown or incorrect time zone: SystemV/PST8PDT'
     
 2. **开始压测:** (参考https://github.com/pingcap-incubator/tidb-in-action/blob/master/session4/chapter3/sysbench.md 写配置更快)
  
-    1. https://github.com/akopytov/sysbench
+    1. **https://github.com/akopytov/sysbench**
         1. create database benchmark;
         2. config:
             mysql-host=192.168.5.227
@@ -213,12 +213,25 @@ But  it comes up with ' unknown or incorrect time zone: SystemV/PST8PDT'
             4. ![sysbench_tikv-details-gRPC](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/sysbench/sysbench_tikv-details-gRPC.png)
         4. **Update Index**: sysbench --config-file=/home/nuc/benchmark/sysbench_thread128.cfg oltp_update_index --tables=16 --table-size=5000000 run
         5.  **Read Only**: sysbench --config-file=/home/nuc/benchmark/sysbench_thread128.cfg oltp_read_only --tables=16 --table-size=5000000 run
-    2. https://github.com/pingcap/go-ycsb
-        1. cd /home/nuc/benchmark/go-ycsb;./bin/go-ycsb  load mysql -P workloads/workloada -p recordcount=5000000 -p mysql.host=192.168.5.227 -p mysql.port=4000 --threads 64
-        2. cd /home/nuc/benchmark/go-ycsb;./bin/go-ycsb run mysql -P workloads/workloada -p operationcount=5000000 -p mysql.host=192.168.5.227 -p mysql.port=4000 --threads 64
-    3. https://github.com/pingcap/go-tpc
-        1. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  prepare -T 8
-        2. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  run -T 8
-        3. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  check -T 8
-        4. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  cleanup -T 8
+    2. **https://github.com/pingcap/go-ycsb**
+        1. cd /home/nuc/benchmark/go-ycsb;./bin/go-ycsb  load mysql -P workloads/workloada -p recordcount=5000000 -p mysql.host=192.168.5.227 -p mysql.port=4000 --threads 128
+        2. cd /home/nuc/benchmark/go-ycsb;./bin/go-ycsb run mysql -P workloads/workloada -p operationcount=5000000 -p mysql.host=192.168.5.227 -p mysql.port=4000 --threads 128
+        3. 测试结果:
+            ```
+            READ   - Takes(s): 801.8, Count: 2498354, OPS: 3116.1, Avg(us): 8938, Min(us): 389, Max(us): 499807, 99th(us): 35000, 99.9th(us): 53000, 99.99th(us): 184000
+            UPDATE - Takes(s): 801.7, Count: 2501582, OPS: 3120.2, Avg(us): 31846, Min(us): 1775, Max(us): 1614822, 99th(us): 195000, 99.9th(us): 286000, 99.99th(us): 421000
+            ```
+            ![go-ycsb_tidb-query-summary](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-ycsb/go-yscb_tidb-query-summary.png)      
+             ![go-yscb_tikv-details-cpu](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-ycsb/go-yscb_tikv-details-cpu.png)
+             ![go-yscb_tidb-tikv-details-gRPC](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-ycsb/go-yscb_tidb-tikv-details-gRPC.png)
+    3. **https://github.com/pingcap/go-tpc**
+        1. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  prepare -T 16
+        2. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  run -T 16
+        3. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  check -T 16
+        4. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  cleanup -T 16
+        5. **测试结果:**
+        ![go-tpc_tidb-query-summary](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-tpc/go-tpc_tidb-query-summary.png)
+        ![go-tpc_tikv-details-cpu](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-tpc/go-tpc_tikv-details-cpu.png)
+        ![go-tpc_tikv-details-gRPC](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-tpc/go-tpc_tikv-details-gRPC.png)
+        
 
