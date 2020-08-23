@@ -1,13 +1,17 @@
 
-192.168.5.227  4core 32g 636/886 209g 76%  good
-192.168.5.228      658/886 184 79%   good
-192.168.5.229 8c  32g  576/886 265 69%  good
+**汇总拓扑:**
+
+| host | cpu  | memory  | disk  | deploy |
+| --- | --- | --- | --- | --- |
+|192.168.5.227  | 4core | 32g  | 209g HP SSD EX950 1TB  | pd + tidb +tikv + alertmanager |
+| 192.168.5.228 | 4core |  32g | 184g HP SSD EX950 1TB   | pd + tidb +tikv + prometheus |
+| 192.168.5.229 | 4core | 32g  | 265g HP SSD EX950 1TB  | pd + tidb +tikv + grafana |
 
 -------------
 
-**192.168.5.227:**
 
-**安装tiup:**
+
+**一. 安装tiup:**
 1. curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
 2. source ~/.profile
 3. tiup cluster
@@ -46,18 +50,16 @@ monitored:
 
 server_configs:
   tidb:
-    log.slow-threshold: 300
     binlog.enable: false
     binlog.ignore-error: false
+    log.level: error
+    log.slow-threshold: 300
   tikv:
-    # server.grpc-concurrency: 4
-    # raftstore.apply-pool-size: 2
-    # raftstore.store-pool-size: 2
-    # rocksdb.max-sub-compactions: 1
-    # storage.block-cache.capacity: "16GB"
-    # readpool.unified.max-thread-count: 12
-    readpool.storage.use-unified-pool: false
+    global.log-level: error
+    raftstore.sync-log: false
     readpool.coprocessor.use-unified-pool: true
+    readpool.storage.use-unified-pool: false
+    storage.block-cache.capacity: 10GB
   pd:
     schedule.leader-schedule-limit: 4
     schedule.region-schedule-limit: 2048
@@ -134,26 +136,6 @@ alertmanager_servers:
 
 ```
 5. tiup cluster deploy tidb-test v4.0.0 ./topology.yaml --user nuc
-```
-Please confirm your topology:
-tidb Cluster: tidb-test
-tidb Version: v4.0.0
-Type          Host           Ports        OS/Arch       Directories
-----          ----           -----        -------       -----------
-pd            192.168.5.227  2379/2380    linux/x86_64  /home/nuc/bin/tidb-deploy/pd-2379,/home/nuc/data/tidb-data/pd-2379
-pd            192.168.5.228  2379/2380    linux/x86_64  /home/nuc/bin/tidb-deploy/pd-2379,/home/nuc/data/tidb-data/pd-2379
-pd            192.168.5.229  2379/2380    linux/x86_64  /home/nuc/bin/tidb-deploy/pd-2379,/home/nuc/data/tidb-data/pd-2379
-tikv          192.168.5.227  20160/20180  linux/x86_64  /home/nuc/bin/tidb-deploy/tikv-20160,/home/nuc/data/tidb-data/tikv-20160
-tikv          192.168.5.228  20160/20180  linux/x86_64  /home/nuc/bin/tidb-deploy/tikv-20160,/home/nuc/data/tidb-data/tikv-20160
-tikv          192.168.5.229  20160/20180  linux/x86_64  /home/nuc/bin/tidb-deploy/tikv-20160,/home/nuc/data/tidb-data/tikv-20160
-tidb          192.168.5.227  4000/10080   linux/x86_64  /home/nuc/bin/tidb-deploy/tidb-4000
-tidb          192.168.5.228  4000/10080   linux/x86_64  /home/nuc/bin/tidb-deploy/tidb-4000
-tidb          192.168.5.229  4000/10080   linux/x86_64  /home/nuc/bin/tidb-deploy/tidb-4000
-prometheus    192.168.5.228  9090         linux/x86_64  /home/nuc/bin/tidb-deploy/prometheus-9090,/home/nuc/data/tidb-data/prometheus-9090
-grafana       192.168.5.229  3000         linux/x86_64  /home/nuc/bin/tidb-deploy/grafana-3000
-alertmanager  192.168.5.227  9093/9094    linux/x86_64  /home/nuc/bin/tidb-deploy/alertmanager-9093,/home/nuc/data/tidb-data/alertmanager-9093
-
-```
 6. tiup cluster start tidb-test (stop , destroy to fix timezone)
 But  it comes up with ' unknown or incorrect time zone: SystemV/PST8PDT' 
 8. 重装:
@@ -162,79 +144,81 @@ But  it comes up with ' unknown or incorrect time zone: SystemV/PST8PDT'
     tiup cluster deploy tidb-test v4.0.0 ./topology.yaml --user nuc 
     tiup cluster start tidb-test
     修复了上面问题
-9. tiup cluster list
-```
-Starting component `cluster`: /home/nuc/.tiup/components/cluster/v1.0.9/tiup-cluster list
-Name       User  Version  Path                                                PrivateKey
-----       ----  -------  ----                                                ----------
-tidb-test  nuc   v4.0.0   /home/nuc/.tiup/storage/cluster/clusters/tidb-test  /home/nuc/.tiup/storage/cluster/clusters/tidb-test/ssh/id_rsa
-```
-10. tiup cluster display tidb-test
-```
-Starting component `cluster`: /home/nuc/.tiup/components/cluster/v1.0.9/tiup-cluster display tidb-test
-tidb Cluster: tidb-test
-tidb Version: v4.0.0
-ID                   Role          Host           Ports        OS/Arch       Status  Data Dir                                    Deploy Dir
---                   ----          ----           -----        -------       ------  --------                                    ----------
-192.168.5.227:9093   alertmanager  192.168.5.227  9093/9094    linux/x86_64  Up      /home/nuc/data/tidb-data/alertmanager-9093  /home/nuc/bin/tidb-deploy/alertmanager-9093
-192.168.5.229:3000   grafana       192.168.5.229  3000         linux/x86_64  Up      -                                           /home/nuc/bin/tidb-deploy/grafana-3000
-192.168.5.227:2379   pd            192.168.5.227  2379/2380    linux/x86_64  Up      /home/nuc/data/tidb-data/pd-2379            /home/nuc/bin/tidb-deploy/pd-2379
-192.168.5.228:2379   pd            192.168.5.228  2379/2380    linux/x86_64  Up|UI   /home/nuc/data/tidb-data/pd-2379            /home/nuc/bin/tidb-deploy/pd-2379
-192.168.5.229:2379   pd            192.168.5.229  2379/2380    linux/x86_64  Up|L    /home/nuc/data/tidb-data/pd-2379            /home/nuc/bin/tidb-deploy/pd-2379
-192.168.5.228:9090   prometheus    192.168.5.228  9090         linux/x86_64  Up      /home/nuc/data/tidb-data/prometheus-9090    /home/nuc/bin/tidb-deploy/prometheus-9090
-192.168.5.227:4000   tidb          192.168.5.227  4000/10080   linux/x86_64  Up      -                                           /home/nuc/bin/tidb-deploy/tidb-4000
-192.168.5.228:4000   tidb          192.168.5.228  4000/10080   linux/x86_64  Up      -                                           /home/nuc/bin/tidb-deploy/tidb-4000
-192.168.5.229:4000   tidb          192.168.5.229  4000/10080   linux/x86_64  Up      -                                           /home/nuc/bin/tidb-deploy/tidb-4000
-192.168.5.227:20160  tikv          192.168.5.227  20160/20180  linux/x86_64  Up      /home/nuc/data/tidb-data/tikv-20160         /home/nuc/bin/tidb-deploy/tikv-20160
-192.168.5.228:20160  tikv          192.168.5.228  20160/20180  linux/x86_64  Up      /home/nuc/data/tidb-data/tikv-20160         /home/nuc/bin/tidb-deploy/tikv-20160
-192.168.5.229:20160  tikv          192.168.5.229  20160/20180  linux/x86_64  Up      /home/nuc/data/tidb-data/tikv-20160         /home/nuc/bin/tidb-deploy/tikv-20160
-```
-11. 验证
-    1. mysql -u root -h 192.168.5.227 -P 4000
-    2. 访问dashboard http://192.168.5.228:2379/dashboard/#/overview (密码不用输入)
+9. 验证部署情况:
+    1. tiup cluster list
+    2. tiup cluster display tidb-test
+    3. mysql -u root -h 192.168.5.227 -P 4000
+    4. 访问dashboard http://192.168.5.228:2379/dashboard/#/overview (密码不用输入)
     
- 12. 测试前准备
-     tiup cluster edit-config tidb-test:
-     1. tidb日志级别error.    log.level: error
-     2. 开启 TiDB 配置中的 prepared plan cache，可减少优化执行计划的开销: prepared_plan_cache.enabled: true(这个加不上)
-     3. 本地事务冲突检测设置，并发压测时建议开启，可减少事务的冲突txn_local_latches.enabled: true
 
-     2. tiup cluster reload tidb-test
-     
- (参数总览)
- ```
-    server_configs:
-  tidb:
-    binlog.enable: false
-    binlog.ignore-error: false
-    log.level: error
-    log.slow-threshold: 300
-  tikv:
-    global.log-level: error
-    raftstore.sync-log: false
-    readpool.coprocessor.use-unified-pool: true
-    readpool.storage.use-unified-pool: false
-    storage.block-cache.capacity: 10GB
-  pd:
-    schedule.leader-schedule-limit: 4
-    schedule.region-schedule-limit: 2048
-    schedule.replica-schedule-limit: 64
-```
 
-13. 测试. 悲观事务
-    1. https://github.com/akopytov/sysbench (参考https://github.com/pingcap-incubator/tidb-in-action/blob/master/session4/chapter3/sysbench.md 写配置更快)
+**二. 测试(悲观事务):**
+1. **准备grafana 监控:**(初始账号密码admin admin)
+    关键指标
+    1. **Tidb Summary-Query Summary:** http://192.168.5.229:3000/d/000000012/tidb-test-tidb-summary?orgId=1
+    2. **Tikv Details-Cluster CPU:** http://192.168.5.229:3000/d/RDVQiEzZz/tidb-test-tikv-details?orgId=1
+    3. **Tikv Details-gRPC ops 和 gRPC duration:** http://192.168.5.229:3000/d/RDVQiEzZz/tidb-test-tikv-details?orgId=1
+    
+    耗时分析:
+    1. **profile:** http://192.168.5.228:2379/dashboard/#/instance_profiling
+    
+2. **开始压测:** (参考https://github.com/pingcap-incubator/tidb-in-action/blob/master/session4/chapter3/sysbench.md 写配置更快)
+ 
+    1. https://github.com/akopytov/sysbench
         1. create database benchmark;
-        2. sysbench --config-file=sysbench_thread64.cfg oltp_point_select --tables=16 --table-size=5000000 prepare
-        3. **Point Select**: sysbench --config-file=sysbench_thread64.cfg oltp_point_select --tables=16 --table-size=5000000 run
-        4. **Update Index**: sysbench --config-file=sysbench_thread64.cfg oltp_update_index --tables=16 --table-size=5000000 run
-        5.  **Read Only**: sysbench --config-file=sysbench_thread64.cfg oltp_read_only --tables=16 --table-size=5000000 run
-    3. https://github.com/pingcap/go-ycsb
+        2. config:
+            mysql-host=192.168.5.227
+            mysql-port=4000
+            mysql-user=root
+            mysql-password=
+            mysql-db=benchmark
+            time=180
+            threads=128
+            report-interval=10
+            db-driver=mysql
+
+        2. **Prepare:** sysbench --config-file=/home/nuc/benchmark/sysbench_thread128.cfg oltp_point_select --tables=16 --table-size=5000000 prepare
+        3. **Point Select**: sysbench --config-file=/home/nuc/benchmark/sysbench_thread128.cfg oltp_point_select --tables=16 --table-size=5000000 run
+            1. 测试结果:
+                ```
+                SQL statistics:
+                    queries performed:
+                        read:                            7323669
+                        write:                           0
+                        other:                           0
+                        total:                           7323669
+                    transactions:                        7323669 (40682.84 per sec.)
+                    queries:                             7323669 (40682.84 per sec.)
+                    ignored errors:                      0      (0.00 per sec.)
+                    reconnects:                          0      (0.00 per sec.)
+
+                General statistics:
+                    total time:                          180.0175s
+                    total number of events:              7323669
+
+                Latency (ms):
+                         min:                                    0.11
+                         avg:                                    3.15
+                         max:                                   48.92
+                         95th percentile:                        7.17
+                         sum:                             23036623.30
+
+                Threads fairness:
+                    events (avg/stddev):           57216.1641/205.11
+                    execution time (avg/stddev):   179.9736/0.01
+                 ```
+                              
+            2. [sysbench_tidb-query-summary](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/sysbench/sysbench_tidb-query-summary.png)
+            3. [sysbench_tikv-details-cpu](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/sysbench/sysbench_tikv-details-cpu.png)
+            4. ![sysbench_tikv-details-gRPC](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/sysbench/sysbench_tikv-details-gRPC.png)
+        4. **Update Index**: sysbench --config-file=/home/nuc/benchmark/sysbench_thread128.cfg oltp_update_index --tables=16 --table-size=5000000 run
+        5.  **Read Only**: sysbench --config-file=/home/nuc/benchmark/sysbench_thread128.cfg oltp_read_only --tables=16 --table-size=5000000 run
+    2. https://github.com/pingcap/go-ycsb
         1. cd /home/nuc/benchmark/go-ycsb;./bin/go-ycsb  load mysql -P workloads/workloada -p recordcount=5000000 -p mysql.host=192.168.5.227 -p mysql.port=4000 --threads 64
         2. cd /home/nuc/benchmark/go-ycsb;./bin/go-ycsb run mysql -P workloads/workloada -p operationcount=5000000 -p mysql.host=192.168.5.227 -p mysql.port=4000 --threads 64
-    2. https://github.com/pingcap/go-tpc
+    3. https://github.com/pingcap/go-tpc
         1. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  prepare -T 8
         2. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  run -T 8
         3. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  check -T 8
         4. go-tpc tpcc -H 192.168.5.227 -P 4000 -D tpcc --warehouses 100  cleanup -T 8
 
-13. grafana 监控，账号密码admin admin
