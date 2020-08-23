@@ -208,8 +208,8 @@ But  it comes up with ' unknown or incorrect time zone: SystemV/PST8PDT'
                     execution time (avg/stddev):   179.9736/0.01
                  ```
                               
-            2. [sysbench_tidb-query-summary](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/sysbench/sysbench_tidb-query-summary.png)
-            3. [sysbench_tikv-details-cpu](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/sysbench/sysbench_tikv-details-cpu.png)
+            2. ![sysbench_tidb-query-summary](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/sysbench/sysbench_tidb-query-summary.png)
+            3. ![sysbench_tikv-details-cpu](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/sysbench/sysbench_tikv-details-cpu.png)
             4. ![sysbench_tikv-details-gRPC](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/sysbench/sysbench_tikv-details-gRPC.png)
         4. **Update Index**: sysbench --config-file=/home/nuc/benchmark/sysbench_thread128.cfg oltp_update_index --tables=16 --table-size=5000000 run
         5.  **Read Only**: sysbench --config-file=/home/nuc/benchmark/sysbench_thread128.cfg oltp_read_only --tables=16 --table-size=5000000 run
