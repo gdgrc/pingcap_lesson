@@ -255,3 +255,7 @@ But  it comes up with ' unknown or incorrect time zone: SystemV/PST8PDT'
         
 
 **三. 初步猜测:**
+通过对golang pprof 分析，可得关于syscall(rpc等网络调用)和 对象分配,gc 占用cpu较多. 可能是以后可优化的点.
+![profile](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/analyse.png)
+
+
