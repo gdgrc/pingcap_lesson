@@ -246,10 +246,11 @@ But  it comes up with ' unknown or incorrect time zone: SystemV/PST8PDT'
         
         PAYMENT_ERR - Takes(s): 0.0, Count: 3, TPM: 18770.5, Sum(ms): 37, Avg(ms): 12, 95th(ms): 24, 99th(ms): 24, 99.9th(ms): 24
         
-STOCK_LEVEL - Takes(s): 2570.2, Count: 32086, TPM: 749.0, Sum(ms): 726191, Avg(ms): 22, 95th(ms): 40, 99th(ms): 64, 99.9th(ms): 80
+        STOCK_LEVEL - Takes(s): 2570.2, Count: 32086, TPM: 749.0, Sum(ms): 726191, Avg(ms): 22, 95th(ms): 40, 99th(ms): 64, 99.9th(ms): 80
         ```
-        ![go-tpc_tidb-query-summary](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-tpc/go-tpc_tidb-query-summary.png)
-        ![go-tpc_tikv-details-cpu](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-tpc/go-tpc_tikv-details-cpu.png)
-        ![go-tpc_tikv-details-gRPC](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-tpc/go-tpc_tikv-details-gRPC.png)
+        
+          ![go-tpc_tidb-query-summary](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-tpc/go-tpc_tidb-query-summary.png)
+          ![go-tpc_tikv-details-cpu](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-tpc/go-tpc_tikv-details-cpu.png)
+          ![go-tpc_tikv-details-gRPC](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-tpc/go-tpc_tikv-details-gRPC.png)
         
 
