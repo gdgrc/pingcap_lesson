@@ -254,3 +254,4 @@ But  it comes up with ' unknown or incorrect time zone: SystemV/PST8PDT'
           ![go-tpc_tikv-details-gRPC](https://github.com/gdgrc/pingcap_lesson/blob/master/lesson2/go-tpc/go-tpc_tikv-details-gRPC.png)
         
 
+**三. 初步猜测:**
